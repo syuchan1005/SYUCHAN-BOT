@@ -41,6 +41,27 @@ public class Weather {
         return main;
     }
 
+    Map<String, String> weathers = new HashMap<>();
+    public String getJPMain() {
+        if(weathers.isEmpty()) {
+            weathers.put("Thunderstorm", "雷");
+            weathers.put("Drizzle", "霧雨");
+            weathers.put("Rain", "雨");
+            weathers.put("Snow", "雪");
+            weathers.put("Atmosphere", "大気");
+            weathers.put("Clear", "晴れ");
+            weathers.put("Clouds", "曇り");
+            weathers.put("Extreme", "異常気象");
+            weathers.put("Additional", "不明");
+            weathers.put("Haze","煙霧");
+        }
+        if(weathers.containsKey(getMain())) {
+            return weathers.get(getMain());
+        } else {
+            return getMain();
+        }
+    }
+
     /**
      * 
      * @param main

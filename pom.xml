@@ -80,15 +80,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.atilika.kuromoji</groupId>
-            <artifactId>kuromoji</artifactId>
-            <version>0.7.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>56.1</version>
+            <groupId>com.memetix</groupId>
+            <artifactId>microsoft-translator-java-api</artifactId>
+            <version>0.6.2</version>
         </dependency>
     </dependencies>
 
