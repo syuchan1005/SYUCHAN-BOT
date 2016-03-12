@@ -53,6 +53,8 @@ public class Weather {
             weathers.put("Clouds", "曇り");
             weathers.put("Extreme", "異常気象");
             weathers.put("Additional", "不明");
+            weathers.put("Mist", "霧");
+            weathers.put("Smoke", "煙");
             weathers.put("Haze","煙霧");
         }
         if(weathers.containsKey(getMain())) {

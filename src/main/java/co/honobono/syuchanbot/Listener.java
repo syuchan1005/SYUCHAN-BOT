@@ -1,9 +1,11 @@
 package co.honobono.syuchanbot;
 
+import co.honobono.syuchanbot.api.RPN;
 import co.honobono.syuchanbot.api.Weather;
 import co.honobono.syuchanbot.constructor.Twitters;
 import twitter4j.*;
 
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,18 +19,41 @@ public class Listener extends UserStreamAdapter {
 		this.twitters = twitters;
 	}
 
-	private static Pattern weather = Pattern.compile("(?:@syu_chan_1005)?(.*)?の天気は[\\?？]");
+	private static Pattern weather_ = Pattern.compile("(?:@syu_chan_1005)?(.*)?の天気は[\\?？]");
+	private static Pattern hex = Pattern.compile("(?:@syu_chan_1005)?toHex (.*)");
+	private static Pattern bin = Pattern.compile("(?:@syu_chan_1005)?toBin (.*)");
+	private static Pattern oct = Pattern.compile("(?:@syu_chan_1005)?toOct (.*)");
+	private static Pattern encode = Pattern.compile("(?:@syu_chan_1005)?base64_encode (.*)");
+	private static Pattern decode = Pattern.compile("(?:@syu_chan_1005)?base64_decode (.*)");
+	private static Pattern rpn = Pattern.compile("(?:@syu_chan_1005)?[rpn|RPN] (.*)");
+	private static Pattern neta = Pattern.compile("(?:@syu_chan_1005)?([Oo]K(.*)[Gg]oogle(.*)|[Hh]ey(.*)[Ss]iri(.*)|コルタナさん(.*)|[Cc]ortanaさん(.*))");
 
 	@Override
-	public void onStatus(Status status) { // TL取得
+	public void onStatus(Status status) {
 		String text = status.getText();
-		if(!text.startsWith("@syu_chan_1005")) return;
-		if(!text.endsWith("openWeatherMap")) System.out.println("ReserveReply: @" + status.getUser().getScreenName() + " " + text);
-		Matcher matcher = weather.matcher(text);
-		if (matcher.find()) {
+		if (!text.startsWith("@syu_chan_1005")) return;
+		if (status.getSource().indexOf("SYUCHAN-BOT") == -1)
+			System.out.println("ReserveReply: @" + status.getUser().getScreenName() + " " + text.replaceAll("\n", " "));
+		else return;
+		Matcher matcher;
+		if ((matcher = weather_.matcher(text)).find()) {
 			String loc = matcher.group(1).replaceAll(" ", "");
-			if(loc.length() != loc.getBytes().length) loc = Weather.toLocation(loc);
+			if (loc.length() != loc.getBytes().length) loc = Weather.toLocation(loc);
 			Weather.call(twitters, status.getUser().getScreenName(), status.getId(), loc);
+		} else if((matcher = hex.matcher(text)).find()) {
+			twitters.sendReply("@" + status.getUser().getScreenName() + "\n" + Integer.toHexString(Integer.valueOf(matcher.group(1))), status.getId());
+		} else if((matcher = bin.matcher(text)).find()) {
+			twitters.sendReply("@" + status.getUser().getScreenName() + "\n" + Integer.toBinaryString(Integer.valueOf(matcher.group(1))), status.getId());
+		} else if((matcher = oct.matcher(text)).find()) {
+			twitters.sendReply("@" + status.getUser().getScreenName() + "\n" + Integer.toOctalString(Integer.valueOf(matcher.group(1))), status.getId());
+		} else if((matcher = encode.matcher(text)).find()) {
+			twitters.sendReply("@" + status.getUser().getScreenName() + "\n" + new String(Base64.getEncoder().encode(matcher.group(1).getBytes())), status.getId());
+		} else if((matcher = decode.matcher(text)).find()) {
+			twitters.sendReply("@" + status.getUser().getScreenName() + "\n" + new String(Base64.getDecoder().decode(matcher.group(1).getBytes())), status.getId());
+		} else if((matcher = rpn.matcher(text)).find()) {
+			twitters.sendReply("@" + status.getUser().getScreenName() + "\n" + RPN.calc(matcher.group(1)), status.getId());
+		} else if((matcher = neta.matcher(text)).find()) {
+			twitters.sendReply("@" + status.getUser().getScreenName() + "\n私はTwitterです.", status.getId());
 		}
 	}
 }
