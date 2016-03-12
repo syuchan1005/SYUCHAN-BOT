@@ -19,7 +19,8 @@ public class Listener extends UserStreamAdapter {
 		this.twitters = twitters;
 	}
 
-	private static Pattern weather_ = Pattern.compile("(?:@syu_chan_1005)?(.*)?の天気は[\\?？]");
+	private static Pattern weather = Pattern.compile("(?:@syu_chan_1005)?(.*)?の天気は[\\?？]");
+	// private static Pattern weather_details = Pattern.compile("(?:@syu_chan_1005)?(.*)の(.*)の天気は[\\?？]");
 	private static Pattern hex = Pattern.compile("(?:@syu_chan_1005)?toHex (.*)");
 	private static Pattern bin = Pattern.compile("(?:@syu_chan_1005)?toBin (.*)");
 	private static Pattern oct = Pattern.compile("(?:@syu_chan_1005)?toOct (.*)");
@@ -35,11 +36,28 @@ public class Listener extends UserStreamAdapter {
 		if (status.getSource().indexOf("SYUCHAN-BOT") == -1)
 			System.out.println("ReserveReply: @" + status.getUser().getScreenName() + " " + text.replaceAll("\n", " "));
 		else return;
+		text = text.replaceAll("\n", " ");
 		Matcher matcher;
-		if ((matcher = weather_.matcher(text)).find()) {
+		if ((matcher = weather.matcher(text)).find()) {
+			/*
+			String loc;
+			Matcher matcher1;
+			if((matcher1 = weather_details.matcher(text)).find()) {
+				loc = matcher1.group(2).replaceAll(" ", "");
+				if (loc.length() != loc.getBytes().length) loc = Weather.toLocation(loc);
+				if(matcher1.group(1).replaceAll(" ", "").equalsIgnoreCase("明日")) {
+					Weather.call_future(twitters, status.getUser().getScreenName(), status.getId(), loc, 1);
+					return;
+				}
+			} else {
+				loc = matcher.group(1).replaceAll(" ", "");
+				if (loc.length() != loc.getBytes().length) loc = Weather.toLocation(loc);
+			}
+			Weather.call_now(twitters, status.getUser().getScreenName(), status.getId(), loc);
+			*/
 			String loc = matcher.group(1).replaceAll(" ", "");
 			if (loc.length() != loc.getBytes().length) loc = Weather.toLocation(loc);
-			Weather.call(twitters, status.getUser().getScreenName(), status.getId(), loc);
+			Weather.call_now(twitters, status.getUser().getScreenName(), status.getId(), loc);
 		} else if((matcher = hex.matcher(text)).find()) {
 			twitters.sendReply("@" + status.getUser().getScreenName() + "\n" + Integer.toHexString(Integer.valueOf(matcher.group(1))), status.getId());
 		} else if((matcher = bin.matcher(text)).find()) {
