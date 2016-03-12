@@ -1,0 +1,19 @@
+{
+  "Twitter": {
+    "Comsumer": {
+      "Key": null,
+      "Secret": null
+    },
+    "AccessToken": {
+      "Key": null,
+      "Secret": null
+    }
+  },
+  "openWeatherMap": {
+    "AppID": null
+  },
+  "Microsoft": {
+    "ClientID": null,
+    "Secret": null
+  }
+}
