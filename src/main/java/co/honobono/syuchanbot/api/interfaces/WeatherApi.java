@@ -1,5 +1,6 @@
 package co.honobono.syuchanbot.api.interfaces;
 
+import co.honobono.syuchanbot.api.constructor.Forecast;
 import co.honobono.syuchanbot.api.constructor.WeatherData;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -12,4 +13,7 @@ import retrofit2.http.Query;
 public interface WeatherApi {
 	@GET("weather?units=metric")
 	Call<WeatherData> getWeather(@Query("q") String location, @Query("appid") String id);
+
+	@GET("forecast?units=metric")
+	Call<Forecast> getForecast(@Query("q") String location, @Query("appid") String id);
 }
